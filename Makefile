@@ -1,6 +1,6 @@
 NASM ?= nasm
 
-all: game.img
+all: game.img game.iso
 
 boot.bin: boot.asm
 	$(NASM) -f bin $< -o $@
@@ -14,11 +14,14 @@ main.bin: main.asm selector.asm vga.asm keyboard.asm timer.asm font.asm tetris.a
 game.img: boot.bin stage2.bin main.bin image.asm
 	$(NASM) -f bin image.asm -o game.img
 
+game.iso: game.img iso.asm
+	$(NASM) -f bin iso.asm -o game.iso
+
 clean:
 ifeq ($(OS),Windows_NT)
-	-del /Q boot.bin stage2.bin main.bin game.img 2>NUL
+	-del /Q boot.bin stage2.bin main.bin game.img game.iso 2>NUL
 else
-	rm -f boot.bin stage2.bin main.bin game.img
+	rm -f boot.bin stage2.bin main.bin game.img game.iso
 endif
 
 .PHONY: all clean
