@@ -12,6 +12,10 @@ selector_screen:
     mov ebx, 174
     mov ebp, 7
     call text
+    mov esi, shutdown_help
+    mov eax, 72
+    mov ebx, 186
+    call text
     xor edi, edi
 .draw:
     mov esi, [options+edi*4]
@@ -30,6 +34,8 @@ selector_screen:
     jb .draw
 .input:
     call poll_key
+    cmp al, KEY_S
+    je .shutdown
     cmp al, KEY_UP
     je .up
     cmp al, KEY_DOWN
@@ -54,9 +60,27 @@ selector_screen:
     je .input
     inc dword [selection]
     jmp selector_screen
+.shutdown:
+    ; QEMU's PIIX4 ACPI PM1 control port. On unsupported hardware, halt.
+    xor eax, eax
+    call clear_screen
+    mov esi, shutdown_message
+    mov eax, 24
+    mov ebx, 90
+    mov ebp, 15
+    call text
+    mov dx, 0x604
+    mov ax, 0x2000
+    out dx, ax
+    cli
+.halt:
+    hlt
+    jmp .halt
 selection dd 0
 title db 'GAME CARTRIDGE',0
 instructions db 'ARROWS + ENTER  /  ESC BACK',0
+shutdown_help db 'S SHUTDOWN (QEMU)',0
+shutdown_message db 'SHUTDOWN REQUESTED - SAFE TO POWER OFF',0
 options dd opt1,opt2,opt3
 opt1 db 'TETRIS',0
 opt2 db 'SNAKE',0

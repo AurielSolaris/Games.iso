@@ -64,12 +64,12 @@ Use the keyboard to control everything; no mouse is needed. If QEMU captures inp
 
 | Screen | Controls |
 | --- | --- |
-| Selector | Up/down to choose, Enter to start |
-| Tetris | Left/right to move, up/X/Z to rotate, F to mirror, down to move down, Space to drop |
+| Selector | Up/down to choose, Enter to start, S to shut down QEMU |
+| Tetris | Left/right to move, up/Q/X/Z to rotate, F to mirror, down to move down, Space to drop |
 | Snake | Arrow keys to steer |
 | Tic-Tac-Toe | Arrows to move the cursor, Enter to place X |
 
-Escape returns from any game to the selector, including after game over. Tic-Tac-Toe's O uses full-depth minimax with alpha-beta pruning. Tetris displays cleared lines; F mirrors the current piece when there is room. Snake ends when it hits a wall or itself. Games target 30 redraws per second, while their movement uses separate PIT-timed ticks; the FPS counter reports actual redraws, which may be lower on slower systems.
+R restarts the current game, including after game over; Escape returns to the selector. S on the selector sends QEMU's ACPI power-off request. On machines that do not support that QEMU-specific port, the cartridge halts and displays a message so you can switch power off manually; general physical-hardware ACPI shutdown is not implemented. Tic-Tac-Toe's O uses full-depth minimax with alpha-beta pruning. Tetris displays cleared lines; F mirrors the current piece when there is room. Snake moves at approximately eight cells per second, wraps around screen edges, and ends if it hits itself. Games target 30 redraws per second, while their movement uses separate PIT-timed ticks; the FPS counter reports actual redraws, which may be lower on slower systems.
 
 ## Boot and hardware
 

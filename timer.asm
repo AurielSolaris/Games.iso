@@ -8,6 +8,7 @@ timer_init:
     call timer_read
     mov [timer_last], ax
     mov dword [timer_acc], 0
+    mov dword [timer_interval], 119318
     ret
 timer_read:
     xor al, al
@@ -17,7 +18,7 @@ timer_read:
     in al, 0x40
     xchg al, ah
     ret
-; EAX = 1 once approximately 1/10 second has passed.
+; EAX = 1 once timer_interval PIT clocks have elapsed.
 timer_poll:
     call timer_read
     mov dx, [timer_last]
@@ -26,13 +27,15 @@ timer_poll:
     movzx edx, dx
     add [timer_acc], edx
     xor eax, eax
-    cmp dword [timer_acc], 119318
+    mov edx, [timer_interval]
+    cmp [timer_acc], edx
     jb .done
-    sub dword [timer_acc], 119318
+    sub [timer_acc], edx
     inc eax
 .done: ret
 timer_last dw 0
 timer_acc dd 0
+timer_interval dd 119318
 random_seed dd 0x19572
 random:
     imul eax, [random_seed], 1664525

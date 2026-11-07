@@ -9,6 +9,8 @@ run_snake:
     mov byte [snake_dead], 0
     call snake_food
     call timer_init
+    ; 125 ms per move (8 moves/s): 80% of the former 10 moves/s.
+    mov dword [timer_interval], 149148
     call fps_init
     call frame_init
 snake_draw:
@@ -64,6 +66,8 @@ snake_draw:
     call poll_key
     cmp al, KEY_ESC
     je selector_screen
+    cmp al, KEY_R
+    je run_snake
     cmp byte [snake_dead], 0
     jne .input
     mov edx, -1
@@ -131,10 +135,23 @@ snake_step:
     jmp .check
 .l: dec dh
 .check:
+    ; Wrap at each edge, including the unsigned underflow from zero.
+    cmp dh, 0xff
+    jne .right_edge
+    mov dh, 19
+.right_edge:
     cmp dh, 20
-    jae .dead
+    jb .top_edge
+    xor dh, dh
+.top_edge:
+    cmp dl, 0xff
+    jne .bottom_edge
+    mov dl, 19
+.bottom_edge:
     cmp dl, 20
-    jae .dead
+    jb .self_check
+    xor dl, dl
+.self_check:
     xor ecx, ecx
     mov ebx, [snake_len]
     cmp dx, [snake_food_pos]
@@ -197,5 +214,5 @@ snake_food_pos dw 0
 snake_dead db 0
 snake_turn_queued db 0
 snake_title db 'SNAKE',0
-snake_help db 'ARROWS MOVE    ESC BACK',0
+snake_help db 'ARROWS MOVE  R RESTART  ESC BACK',0
 snake_over db 'GAME OVER',0

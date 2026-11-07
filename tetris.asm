@@ -81,6 +81,8 @@ t_draw:
     call poll_key
     cmp al, KEY_ESC
     je selector_screen
+    cmp al, KEY_R
+    je run_tetris
     cmp byte [t_dead], 0
     jne .input
     cmp al, KEY_LEFT
@@ -100,6 +102,8 @@ t_draw:
     dec dword [t_x]
     jmp .input
 .rotate: cmp al, KEY_UP
+    je .rot
+    cmp al, KEY_Q
     je .rot
     cmp al, KEY_X
     je .rot
@@ -321,6 +325,6 @@ t_shapes:
  db 1,7,0,0, 6,2,2,0, 0,7,4,0, 2,2,3,0
  db 4,7,0,0, 2,2,6,0, 0,7,1,0, 3,2,2,0
 t_title db 'TETRIS',0
-t_help db 'ARROWS MOVE  F FLIP  SPACE DROP  ESC',0
+t_help db 'Q ROTATE F FLIP SPACE DROP R RESTART',0
 t_lines_label db 'LINES',0
 t_over db 'GAME OVER',0

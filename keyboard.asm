@@ -8,6 +8,9 @@
 %define KEY_Z 0x2c
 %define KEY_X 0x2d
 %define KEY_F 0x21
+%define KEY_Q 0x10
+%define KEY_R 0x13
+%define KEY_S 0x1f
 poll_key:
     push ebx
     push edx

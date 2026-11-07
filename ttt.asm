@@ -79,6 +79,8 @@ ttt_draw:
     call poll_key
     cmp al, KEY_ESC
     je selector_screen
+    cmp al, KEY_R
+    je run_ttt
     cmp byte [ttt_result], 0
     jne .input
     mov edi, [ttt_cursor]
@@ -270,7 +272,7 @@ ttt_best dd 0
 ttt_best_cell dd 0
 ttt_lines db 0,1,2,3,4,5,6,7,8,0,3,6,1,4,7,2,5,8,0,4,8,2,4,6
 ttt_title db 'TIC TAC TOE',0
-ttt_help db 'ARROWS ENTER  ESC BACK',0
+ttt_help db 'ARROWS ENTER R RESTART ESC BACK',0
 ttt_blank db ' ',0
 ttt_x db 'X',0
 ttt_o db 'O',0
