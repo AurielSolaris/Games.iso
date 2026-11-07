@@ -1,0 +1,11 @@
+bits 32
+org 0x8000
+    jmp selector_screen
+%include 'keyboard.asm'
+%include 'timer.asm'
+%include 'vga.asm'
+%include 'font.asm'
+%include 'selector.asm'
+%include 'tetris.asm'
+%include 'snake.asm'
+%include 'ttt.asm'
