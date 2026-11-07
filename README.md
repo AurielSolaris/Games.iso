@@ -65,11 +65,11 @@ Use the keyboard to control everything; no mouse is needed. If QEMU captures inp
 | Screen | Controls |
 | --- | --- |
 | Selector | Up/down to choose, Enter to start |
-| Tetris | Left/right to move, up/X/Z to rotate, down to move down, Space to drop |
+| Tetris | Left/right to move, up/X/Z to rotate, F to mirror, down to move down, Space to drop |
 | Snake | Arrow keys to steer |
 | Tic-Tac-Toe | Arrows to move the cursor, Enter to place X |
 
-Escape returns from any game to the selector, including after game over. Tic-Tac-Toe's O uses full-depth minimax with alpha-beta pruning. Tetris displays cleared lines. Snake ends when it hits a wall or itself. Each game's FPS counter reports complete screen redraws per second; idle turn-based screens can therefore show zero.
+Escape returns from any game to the selector, including after game over. Tic-Tac-Toe's O uses full-depth minimax with alpha-beta pruning. Tetris displays cleared lines; F mirrors the current piece when there is room. Snake ends when it hits a wall or itself. Games target 30 redraws per second, while their movement uses separate PIT-timed ticks; the FPS counter reports actual redraws, which may be lower on slower systems.
 
 ## Boot and hardware
 

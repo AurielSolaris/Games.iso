@@ -10,7 +10,9 @@ run_snake:
     call snake_food
     call timer_init
     call fps_init
+    call frame_init
 snake_draw:
+    call frame_wait
     xor eax, eax
     call clear_screen
     mov esi, snake_title
@@ -56,6 +58,9 @@ snake_draw:
     call text
 .input:
     call fps_poll
+    call frame_poll
+    test eax, eax
+    jnz snake_draw
     call poll_key
     cmp al, KEY_ESC
     je selector_screen

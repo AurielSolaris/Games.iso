@@ -9,7 +9,9 @@ run_tetris:
     call t_spawn
     call timer_init
     call fps_init
+    call frame_init
 t_draw:
+    call frame_wait
     xor eax, eax
     call clear_screen
     mov esi, t_title
@@ -61,6 +63,9 @@ t_draw:
     call text
 .input:
     call fps_poll
+    call frame_poll
+    test eax, eax
+    jnz t_draw
     cmp byte [t_dead], 0
     jne .read_key
     call timer_poll
@@ -99,7 +104,7 @@ t_draw:
     cmp al, KEY_X
     je .rot
     cmp al, KEY_Z
-    jne .down
+    jne .flip
 .rot: inc dword [t_rot]
     and dword [t_rot], 3
     call t_valid
@@ -107,6 +112,15 @@ t_draw:
     jnz t_draw
     add dword [t_rot], 3
     and dword [t_rot], 3
+    jmp .input
+.flip:
+    cmp al, KEY_F
+    jne .down
+    xor byte [t_flipped], 1
+    call t_valid
+    test eax, eax
+    jnz t_draw
+    xor byte [t_flipped], 1
     jmp .input
 .down: cmp al, KEY_DOWN
     jne .drop
@@ -163,6 +177,7 @@ t_spawn:
     div ecx
     mov [t_type], edx
     mov dword [t_rot], 0
+    mov byte [t_flipped], 0
     mov dword [t_x], 3
     mov dword [t_y], 0
     call t_valid
@@ -204,7 +219,12 @@ t_piece_cells:
     xor ecx, ecx
 .col:
     movzx edx, byte [esi+edi]
-    bt edx, ecx
+    mov eax, ecx
+    cmp byte [t_flipped], 0
+    je .test_bit
+    xor eax, 3
+.test_bit:
+    bt edx, eax
     jnc .next
     mov eax, [t_x]
     add eax, ecx
@@ -289,6 +309,7 @@ t_lines dd 0
 t_ticks db 0
 t_dead db 0
 t_action db 0
+t_flipped db 0
 t_digits times 11 db 0
 ; Each byte is a row, least significant bit is the leftmost cell.
 t_shapes:
@@ -300,6 +321,6 @@ t_shapes:
  db 1,7,0,0, 6,2,2,0, 0,7,4,0, 2,2,3,0
  db 4,7,0,0, 2,2,6,0, 0,7,1,0, 3,2,2,0
 t_title db 'TETRIS',0
-t_help db 'ARROWS MOVE  SPACE DROP  ESC',0
+t_help db 'ARROWS MOVE  F FLIP  SPACE DROP  ESC',0
 t_lines_label db 'LINES',0
 t_over db 'GAME OVER',0

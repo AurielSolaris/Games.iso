@@ -7,7 +7,9 @@ run_ttt:
     mov byte [ttt_result], 0
     call timer_init
     call fps_init
+    call frame_init
 ttt_draw:
+    call frame_wait
     xor eax, eax
     call clear_screen
     mov esi, ttt_title
@@ -71,6 +73,9 @@ ttt_draw:
     call text
 .input:
     call fps_poll
+    call frame_poll
+    test eax, eax
+    jnz ttt_draw
     call poll_key
     cmp al, KEY_ESC
     je selector_screen

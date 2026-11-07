@@ -40,8 +40,39 @@ random:
     mov [random_seed], eax
     ret
 
-; Count completed screen redraws per second. Sample in each input loop so
-; the display falls to zero when a turn-based screen is idle.
+; Target 30 redraws/second, independently of gameplay tick frequency.
+; Poll the PIT frequently enough to observe its 16-bit counter wrap.
+frame_init:
+    call timer_read
+    mov [frame_last], ax
+    mov dword [frame_elapsed], 39773 ; first frame is immediate
+    ret
+frame_poll:
+    push edx
+    call timer_read
+    mov dx, [frame_last]
+    mov [frame_last], ax
+    sub dx, ax
+    movzx edx, dx
+    add [frame_elapsed], edx
+    xor eax, eax
+    cmp dword [frame_elapsed], 39773 ; 1193182 / 30 PIT clocks
+    jb .out
+    inc eax
+.out:
+    pop edx
+    ret
+frame_wait:
+    call frame_poll
+    test eax, eax
+    jz frame_wait
+    ; Do not accumulate backlog: slow frames cannot cause a burst of redraws.
+    mov dword [frame_elapsed], 0
+    ret
+frame_last dw 0
+frame_elapsed dd 0
+
+; Count completed screen redraws per second.
 fps_init:
     call timer_read
     mov [fps_last], ax
